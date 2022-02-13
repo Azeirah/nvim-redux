@@ -10,12 +10,17 @@ end
 
 local switch_case_names_query = read_file_contents('query_switch.tsq')
 
-local function list_files_with_action_dot_type(cwd)
+-- query: string, regex for ripgrep.
+-- cwd: optional string, directory to run ripgrep in
+-- Ripgrep command uses -e flag for regex input.
+-- Searches only js and adjacent files (.js, .jsx, .ts, .tsx)
+local function rg_list_javascript_files_containing_regex(query, cwd, filetypes)
     local cwd = cwd or vim.loop.cwd()
+
     local rg = Job:new({
         command = 'rg',
         args = { 
-            "-e",  "action\\.type",
+            "-e", query,
             "-g*js", "-g*ts", "-g*jsx", "-g*tsx",
             "-l",
             cwd,
@@ -26,6 +31,10 @@ local function list_files_with_action_dot_type(cwd)
     })
     rg:sync()
     return rg:result()
+end
+
+local function list_files_with_action_dot_type(cwd)
+    return rg_list_javascript_files_containing_regex("action\\.type", cwd)
 end
 
 local function collect_switch_cases(files)
