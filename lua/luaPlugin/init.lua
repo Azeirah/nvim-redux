@@ -1,5 +1,4 @@
 local Job = require('plenary.job')
-local ts_utils = require('nvim-treesitter.ts_utils')
 local redux_picker = require('telescope-redux-picker')
 local utils = require('utils')
 
