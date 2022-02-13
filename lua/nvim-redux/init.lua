@@ -1,6 +1,6 @@
-local redux_picker = require('telescope-redux-picker')
-local utils = require('utils')
-local rgts_query = require('rgts_query')
+local redux_picker = require('nvim-redux.telescope-redux-picker')
+local utils = require('nvim-redux.utils')
+local rgts_query = require('nvim-redux.rgts_query')
 
 local function do_the_thing(cwd)
     local switch_case_names_query = utils.read_file_contents('query_switch.tsq')

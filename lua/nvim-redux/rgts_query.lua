@@ -1,5 +1,5 @@
 local Job = require('plenary.job')
-local utils = require('utils')
+local utils = require('nvim-redux.utils')
 
 -- query: string, regex for ripgrep.
 -- cwd: optional string, directory to run ripgrep in
