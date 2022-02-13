@@ -25,9 +25,6 @@ local function rg_list_javascript_files_containing_regex(query, cwd)
     return rg:result()
 end
 
-local function list_files_with_action_dot_type(cwd)
-    return rg_list_javascript_files_containing_regex("action\\.type", cwd)
-end
 
 -- Executes a given treesitter query in all specified files.
 -- The query must specify captures, otherwise this function will not return anything
@@ -81,7 +78,7 @@ end
 
 local function do_the_thing(cwd)
     local switch_case_names_query = utils.read_file_contents('query_switch.tsq')
-    local files = list_files_with_action_dot_type(cwd)
+    local files = rg_list_javascript_files_containing_regex("action\\.type", cwd)
     local output = treesitter_captures_in_files(files, switch_case_names_query)
     redux_picker(output)
 end
