@@ -93,24 +93,6 @@ local conf = require('telescope.config').values
 local action_set = require('telescope.actions.set')
 local action_state = require('telescope.actions.state')
 
-local edit_buffer
-do
-  local map = {
-    edit = "buffer",
-    new = "sbuffer",
-    vnew = "vert sbuffer",
-    tabedit = "tab sb",
-  }
-
-  edit_buffer = function(command, bufnr)
-    command = map[command]
-    if command == nil then
-      error "There was no associated buffer command"
-    end
-    vim.cmd(string.format("%s %d", command, bufnr))
-  end
-end
-
 local redux_picker = function (results, opts)
     opts = opts or {}
     local displayer = entry_display.create({
