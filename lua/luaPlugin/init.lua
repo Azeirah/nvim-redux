@@ -8,8 +8,6 @@ local function read_file_contents(filename)
     return content
 end
 
-local switch_case_names_query = read_file_contents('query_switch.tsq')
-
 -- query: string, regex for ripgrep.
 -- cwd: optional string, directory to run ripgrep in
 -- Ripgrep command uses -e flag for regex input.
@@ -37,13 +35,21 @@ local function list_files_with_action_dot_type(cwd)
     return rg_list_javascript_files_containing_regex("action\\.type", cwd)
 end
 
-local function collect_switch_cases(files)
-    -- collect all switch statements alongside filename:linenum in a list
-    -- for each file:
-    --      open()
-    --      parse()
-    --      query()
-    --      extract results to big list
+-- Executes a given treesitter query in all specified files.
+-- The query must specify captures, otherwise this function will not return anything
+-- files: array of filenames to parse and execute query for.
+-- treesitter_query: A treesitter query for JavaScript containing captures.
+-- Returns an array of captures. Each capture has the following fields
+--      node = treesitter node corresponding to capture found by treesitter
+--      path = filename from files
+--      text = node text
+--      lnum = line number where node is found (node.start_row)
+--      col = column in bytes where node is found on the line (node.start_col)
+--      start_row = start_row,
+--      start_col = start_col,
+--      end_row = end_row,
+--      end_col = end_col
+local function treesitter_captures_in_files(files, treesitter_query)
     local language = "javascript"
     local switch_cases = {}
     for i, filename in ipairs(files) do
@@ -51,11 +57,12 @@ local function collect_switch_cases(files)
         local parser = vim.treesitter.get_string_parser(contents, language)
         local tree = (parser:parse() or {})[1]
         if not tree then
+            -- TODO: This should be a debug message of sorts
             print "Failed to parse tree"
             return
         end
         local root = tree:root()
-        local q = vim.treesitter.parse_query(language, switch_case_names_query)
+        local q = vim.treesitter.parse_query(language, treesitter_query)
         for id, node, matches in q:iter_captures(root, contents, start_row, end_row) do
             local text = vim.treesitter.query.get_node_text(node, contents)
             local type = node:type()
@@ -65,7 +72,11 @@ local function collect_switch_cases(files)
                     path = filename,
                     text = text,
                     lnum = start_row + 1,
-                    col = start_col
+                    col = start_col,
+                    start_row = start_row,
+                    start_col = start_col,
+                    end_row = end_row,
+                    end_col = end_col
                 }
             end
         end
@@ -159,8 +170,9 @@ local redux_picker = function (results, opts)
 end
 
 local function do_the_thing(cwd)
+    local switch_case_names_query = read_file_contents('query_switch.tsq')
     local files = list_files_with_action_dot_type(cwd)
-    local output = collect_switch_cases(files)
+    local output = treesitter_captures_in_files(files, switch_case_names_query)
     redux_picker(output)
 end
 
