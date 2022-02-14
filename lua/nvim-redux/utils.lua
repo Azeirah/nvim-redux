@@ -12,8 +12,6 @@ local function read_file_contents(filename, relative)
         filename = get_path_relative_to_source_dir(filename)
     end
 
-    print('filename::' .. filename)
-
     local f = io.open(filename, 'r')
     content = f:read('a')
     f.close()
