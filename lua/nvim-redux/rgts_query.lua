@@ -14,7 +14,6 @@ local function rg_query_files(query, cwd)
             "-e", query,
             "-g*js", "-g*ts", "-g*jsx", "-g*tsx",
             "-l",
-            cwd,
             -- don't remove the ./
             -- https://github.com/BurntSushi/ripgrep/issues/1892#issuecomment-860270717
             "./"
