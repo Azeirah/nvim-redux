@@ -6,6 +6,8 @@ local conf = require('telescope.config').values
 local action_set = require('telescope.actions.set')
 local action_state = require('telescope.actions.state')
 
+local ns_previewer = vim.api.nvim_create_namespace "telescope.previewers"
+
 local redux_picker = function (results, opts)
     opts = opts or {}
     local displayer = entry_display.create({
@@ -31,7 +33,10 @@ local redux_picker = function (results, opts)
                     ordinal = entry.text,
                     filename = entry.path,
                     lnum = entry.lnum,
-                    col = entry.col
+                    start_row = entry.start_row,
+                    start_col = entry.start_col,
+                    end_row = entry.end_row,
+                    end_col = entry.end_col,
                 }
             end
         },
@@ -52,9 +57,11 @@ local redux_picker = function (results, opts)
                     preview = opts.preview,
                     callback = function(bufnr)
                         vim.api.nvim_buf_call(bufnr, function () 
-                            vim.cmd "norm! gg"
-                            vim.cmd( "/" .. entry.value.text)
-                            vim.cmd "norm! zz"
+                            vim.cmd("norm! gg")
+                            vim.cmd("/" .. entry.value.text)
+                            vim.cmd("set cursorline")
+                            vim.cmd('nohl')
+                            vim.cmd("norm! zz")
                         end)
                     end,
                 })

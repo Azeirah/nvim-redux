@@ -55,7 +55,7 @@ local function ts_query_captures(files, treesitter_query)
         for id, node, matches in q:iter_captures(root, contents, start_row, end_row) do
             local text = vim.treesitter.query.get_node_text(node, contents)
             local type = node:type()
-            local start_row, start_col, end_row, _ = node:range()
+            local start_row, start_col, end_row, end_col = node:range()
             -- TODO: this predicate needs to be abstracted
             if type:find('string') then
                 switch_cases[#switch_cases+1] = {
@@ -66,7 +66,7 @@ local function ts_query_captures(files, treesitter_query)
                     start_row = start_row,
                     start_col = start_col,
                     end_row = end_row,
-                    end_col = end_col
+                    end_col = end_col,
                 }
             end
         end
