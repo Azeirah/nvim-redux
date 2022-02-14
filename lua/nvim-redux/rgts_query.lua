@@ -5,9 +5,7 @@ local utils = require('nvim-redux.utils')
 -- cwd: optional string, directory to run ripgrep in
 -- Ripgrep command uses -e flag for regex input.
 -- Searches only js and adjacent files (.js, .jsx, .ts, .tsx)
-local function rg_query_files(query, cwd)
-    local cwd = cwd or vim.loop.cwd()
-
+local function rg_query_files(query)
     local rg = Job:new({
         command = 'rg',
         args = { 
