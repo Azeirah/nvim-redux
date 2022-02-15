@@ -20,5 +20,6 @@ local function find_dispatch_calls()
 end
 
 return {
-    list_actions_in_switch_reducer = do_the_thing
+    list_actions_in_switch_reducer = do_the_thing,
+    list_dispatch_calls = find_dispatch_calls
 }
