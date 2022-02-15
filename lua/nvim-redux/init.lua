@@ -12,7 +12,7 @@ end
 
 local function find_dispatch_calls()
     telescope.live_grep({
-        default_text="dispatch",
+        default_text="dispatch\s*\(",
         prompt_title="redux dispatch calls",
         additional_args=function()
             return {"-g*ts", "-g*js", "-g*tsx", "-g*jsx"}
