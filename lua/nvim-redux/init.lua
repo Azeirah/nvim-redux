@@ -16,7 +16,8 @@ local function find_dispatch_calls()
         prompt_title="redux dispatch calls",
         additional_args=function()
             return {"-g*ts", "-g*js", "-g*tsx", "-g*jsx"}
-        end})
+        end}),
+        use_regex=true
 end
 
 return {
