@@ -21,6 +21,41 @@ local function rg_query_files(query)
     return rg:result()
 end
 
+local function ts_capture(code, query)
+    local language = "javascript"
+    local switch_cases = {}
+
+    local parser = vim.treesitter.get_string_parser(code, language)
+    local tree = (parser:parse() or {})[1]
+    if not tree then
+        -- TODO: This should be a debug message of sorts
+        print "Failed to parse tree"
+        return
+    end
+    local root = tree:root()
+    local q = vim.treesitter.parse_query(language, query)
+    for id, node, matches in q:iter_captures(root, code, start_row, end_row) do
+        local text = vim.treesitter.query.get_node_text(node, code)
+        local type = node:type()
+        local start_row, start_col, end_row, end_col = node:range()
+        -- TODO: this predicate needs to be abstracted
+        if type:find('string') then
+            switch_cases[#switch_cases+1] = {
+                path = filename,
+                text = text,
+                lnum = start_row + 1,
+                col = start_col,
+                start_row = start_row,
+                start_col = start_col,
+                end_row = end_row,
+                end_col = end_col,
+            }
+        end
+    end
+
+    return switch_cases
+end
+
 -- Executes a given treesitter query in all specified files.
 -- The query must specify captures, otherwise this function will not return anything
 -- files: array of filenames to parse and execute query for.
@@ -36,36 +71,12 @@ end
 --      end_row = end_row,
 --      end_col = end_col
 local function ts_query_captures(files, treesitter_query)
-    local language = "javascript"
     local switch_cases = {}
+
     for i, filename in ipairs(files) do
         local contents = utils.read_file_contents(filename)
-        local parser = vim.treesitter.get_string_parser(contents, language)
-        local tree = (parser:parse() or {})[1]
-        if not tree then
-            -- TODO: This should be a debug message of sorts
-            print "Failed to parse tree"
-            return
-        end
-        local root = tree:root()
-        local q = vim.treesitter.parse_query(language, treesitter_query)
-        for id, node, matches in q:iter_captures(root, contents, start_row, end_row) do
-            local text = vim.treesitter.query.get_node_text(node, contents)
-            local type = node:type()
-            local start_row, start_col, end_row, end_col = node:range()
-            -- TODO: this predicate needs to be abstracted
-            if type:find('string') then
-                switch_cases[#switch_cases+1] = {
-                    path = filename,
-                    text = text,
-                    lnum = start_row + 1,
-                    col = start_col,
-                    start_row = start_row,
-                    start_col = start_col,
-                    end_row = end_row,
-                    end_col = end_col,
-                }
-            end
+        for _, value in ipairs(ts_capture(contents, treesitter_query)) do
+            switch_cases:insert(value)
         end
     end
 
@@ -80,5 +91,6 @@ end
 return {
     rg_query_files = rg_query_files,
     ts_query_captures = ts_query_captures,
-    query_for_telescope = super_cool_high_level_api
+    query_for_telescope = super_cool_high_level_api,
+    ts_capture = ts_capture
 }
