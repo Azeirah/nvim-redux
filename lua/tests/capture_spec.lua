@@ -38,3 +38,12 @@ describe('captures', function()
         assert.is_not_nil(capture.lnum)
     end)
 end)
+
+describe('ts_query_captures', function()
+    it('should return captures', function() 
+        local action_query = utils.read_file_contents('queries/query_switch.tsq', true)
+        local entries = rgts.ts_query_captures({dummy_js}, action_query)
+
+        assert.is.equal(#entries, 2)
+    end)
+end)

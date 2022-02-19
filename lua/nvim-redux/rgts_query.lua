@@ -56,9 +56,9 @@ local function ts_capture(code, query)
     return switch_cases
 end
 
--- Executes a given treesitter query in all specified files.
+-- Executes a given treesitter query for all given code.
 -- The query must specify captures, otherwise this function will not return anything
--- files: array of filenames to parse and execute query for.
+-- code_file_contents: arrays of code read from source files
 -- treesitter_query: A treesitter query for JavaScript containing captures.
 -- Returns an array of captures. Each capture has the following fields
 --      node = treesitter node corresponding to capture found by treesitter
@@ -70,13 +70,12 @@ end
 --      start_col = start_col,
 --      end_row = end_row,
 --      end_col = end_col
-local function ts_query_captures(files, treesitter_query)
+local function ts_query_captures(code_files_contents, treesitter_query)
     local switch_cases = {}
 
-    for i, filename in ipairs(files) do
-        local contents = utils.read_file_contents(filename)
-        for _, value in ipairs(ts_capture(contents, treesitter_query)) do
-            switch_cases:insert(value)
+    for _, code in ipairs(code_files_contents) do
+        for _, value in ipairs(ts_capture(code, treesitter_query)) do
+            table.insert(switch_cases, value)
         end
     end
 
@@ -84,8 +83,11 @@ local function ts_query_captures(files, treesitter_query)
 end
 
 local function super_cool_high_level_api(rg_query, ts_query, cwd)
-    local files = rg_query_files(rg_query, cwd)
-    return ts_query_captures(files, ts_query)
+    local code_contents = {}
+    for _, filename in ipairs(files) do
+        code_contents[#code_contents + 1] = utils.read_file_contents(filename)
+    end
+    return ts_query_captures(code_contents, ts_query)
 end
 
 return {
