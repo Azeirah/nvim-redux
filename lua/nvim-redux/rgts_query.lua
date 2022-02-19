@@ -84,12 +84,7 @@ local function ts_query_captures(files, treesitter_query)
 end
 
 local function super_cool_high_level_api(rg_query, ts_query, cwd)
-    local code_contents = {}
-    local files = rg_query_files(rg_query, cwd)
-    for _, filename in ipairs(files) do
-        code_contents[#code_contents + 1] = utils.read_file_contents(filename)
-    end
-    return ts_query_captures(code_contents, ts_query, files)
+    return ts_query_captures(files, rg_query_files(rg_query, cwd))
 end
 
 return {
