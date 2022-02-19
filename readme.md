@@ -30,11 +30,15 @@ nmap <leader>lra :lua require('nvim-redux').list_actions_in_switch_reducer()<CR>
 
 ### List dispatch calls in telescope
 
+![Displays example of dispatch listing in telescope](dispatch_calls.png)
+
 Searches your project for calls to `dispatch(...)`.
 
 **nvim-redux.list_dispatch_calls**
 
 ### List redux action definitions in telescope
+
+![Displays example of action definition listing in telescope](action_definitions.png)
 
 Finds all redux action definitions. Right now, only supports raw action definitions, ie
 
