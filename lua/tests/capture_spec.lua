@@ -1,27 +1,16 @@
 local rgts = require('nvim-redux.rgts_query')
 local utils = require('nvim-redux.utils')
 
-local dummy_js = [[
-switch (action.type) {
-    case "bla":
-        break;
-    case "blaa":
-        break;
-    default:
-        return;
-}
-]]
-
 describe('captures', function()
     it('should find two switch-case-string captures in provided example code', function() 
         local q = utils.read_file_contents('lua/nvim-redux/queries/query_switch.tsq')
-        local captures = rgts.ts_capture(dummy_js, q)
+        local captures = rgts.ts_capture('lua/tests/example_code_with_switch.js', q)
         assert.are.equal(2, #captures)
     end)
 
     it('should find the strings "bla" and "blaa"', function() 
         local q = utils.read_file_contents('lua/nvim-redux/queries/query_switch.tsq')
-        local captures = rgts.ts_capture(dummy_js, q)
+        local captures = rgts.ts_capture('lua/tests/example_code_with_switch.js', q)
         local first = captures[1]
         local second = captures[2]
 
@@ -31,7 +20,7 @@ describe('captures', function()
 
     it('should contain col, lnum for telescope to jump to correct context', function() 
         local q = utils.read_file_contents('lua/nvim-redux/queries/query_switch.tsq')
-        local captures = rgts.ts_capture(dummy_js, q)
+        local captures = rgts.ts_capture('lua/tests/example_code_with_switch.js', q)
 
         local capture = captures[1]
         assert.is_not_nil(capture.col)
@@ -42,7 +31,7 @@ end)
 describe('ts_query_captures', function()
     it('should return captures', function() 
         local action_query = utils.read_file_contents('queries/query_switch.tsq', true)
-        local entries = rgts.ts_query_captures({dummy_js}, action_query)
+        local entries = rgts.ts_query_captures({'lua/tests/example_code_with_switch.js'}, action_query)
 
         assert.is.equal(#entries, 2)
     end)

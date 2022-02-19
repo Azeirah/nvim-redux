@@ -21,10 +21,11 @@ local function rg_query_files(query)
     return rg:result()
 end
 
-local function ts_capture(code, query)
+local function ts_capture(filename, query)
     local language = "javascript"
     local switch_cases = {}
 
+    local code = utils.read_file_contents(filename)
     local parser = vim.treesitter.get_string_parser(code, language)
     local tree = (parser:parse() or {})[1]
     if not tree then
@@ -58,7 +59,7 @@ end
 
 -- Executes a given treesitter query for all given code.
 -- The query must specify captures, otherwise this function will not return anything
--- code_file_contents: arrays of code read from source files
+-- files: array of filenames to parse and execute the given query in
 -- treesitter_query: A treesitter query for JavaScript containing captures.
 -- Returns an array of captures. Each capture has the following fields
 --      node = treesitter node corresponding to capture found by treesitter
@@ -70,11 +71,11 @@ end
 --      start_col = start_col,
 --      end_row = end_row,
 --      end_col = end_col
-local function ts_query_captures(code_files_contents, treesitter_query)
+local function ts_query_captures(files, treesitter_query)
     local switch_cases = {}
 
-    for _, code in ipairs(code_files_contents) do
-        for _, value in ipairs(ts_capture(code, treesitter_query)) do
+    for _, filename in ipairs(files) do
+        for _, value in ipairs(ts_capture(filename, treesitter_query)) do
             table.insert(switch_cases, value)
         end
     end
@@ -88,7 +89,7 @@ local function super_cool_high_level_api(rg_query, ts_query, cwd)
     for _, filename in ipairs(files) do
         code_contents[#code_contents + 1] = utils.read_file_contents(filename)
     end
-    return ts_query_captures(code_contents, ts_query)
+    return ts_query_captures(code_contents, ts_query, files)
 end
 
 return {
