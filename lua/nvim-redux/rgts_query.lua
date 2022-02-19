@@ -84,7 +84,8 @@ local function ts_query_captures(files, treesitter_query)
 end
 
 local function super_cool_high_level_api(rg_query, ts_query, cwd)
-    return ts_query_captures(files, rg_query_files(rg_query, cwd))
+    local code_contents = {}
+    return ts_query_captures(rg_query_files(rg_query, cwd), ts_query)
 end
 
 return {
