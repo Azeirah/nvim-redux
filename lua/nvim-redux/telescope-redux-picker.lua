@@ -58,11 +58,13 @@ local redux_picker = function (results, opts)
                     preview = opts.preview,
                     callback = function(bufnr)
                         vim.api.nvim_buf_call(bufnr, function () 
-                            vim.cmd("norm! gg")
-                            vim.cmd("/" .. entry.value.text)
-                            vim.cmd("set cursorline")
-                            vim.cmd('nohl')
-                            vim.cmd("norm! zz")
+                            -- we want highlight, but I can't get vam.api.nvim_buf_add_highlight to work!
+                            -- the code below allows for vim command injection so that's not even remotely a good substitute
+                          --  vim.cmd("norm! gg")
+                          --  vim.cmd("/" .. entry.value.text)
+                          --  vim.cmd("set cursorline")
+                          --  vim.cmd('nohl')
+                          --  vim.cmd("norm! zz")
                         end)
                     end,
                 })
