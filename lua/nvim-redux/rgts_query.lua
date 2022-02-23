@@ -21,7 +21,7 @@ local function rg_query_files(query)
     return rg:result()
 end
 
-local function ts_capture(filename, query)
+local function ts_capture(filename, query, accepted_node_names)
     local language = "javascript"
     local switch_cases = {}
 
@@ -35,12 +35,20 @@ local function ts_capture(filename, query)
     end
     local root = tree:root()
     local q = vim.treesitter.parse_query(language, query)
-    for id, node, matches in q:iter_captures(root, code, start_row, end_row) do
+    for id, node, matches in q:iter_captures(root, code) do
         local text = vim.treesitter.query.get_node_text(node, code)
-        local type = node:type()
         local start_row, start_col, end_row, end_col = node:range()
+        local name = q.captures[id]
+        node_accepted = false
+        --print(text)
+        for _, accepted_name in ipairs(accepted_node_names) do
+            if name == accepted_name then
+                node_accepted = true
+                break
+            end
+        end
         -- TODO: this predicate needs to be abstracted
-        if type:find('string') then
+        if node_accepted then
             switch_cases[#switch_cases+1] = {
                 path = filename,
                 text = text,
@@ -71,11 +79,11 @@ end
 --      start_col = start_col,
 --      end_row = end_row,
 --      end_col = end_col
-local function ts_query_captures(files, treesitter_query)
+local function ts_query_captures(files, treesitter_query, accepted_node_names)
     local switch_cases = {}
 
     for _, filename in ipairs(files) do
-        for _, value in ipairs(ts_capture(filename, treesitter_query)) do
+        for _, value in ipairs(ts_capture(filename, treesitter_query, accepted_node_names)) do
             table.insert(switch_cases, value)
         end
     end
@@ -83,9 +91,9 @@ local function ts_query_captures(files, treesitter_query)
     return switch_cases
 end
 
-local function super_cool_high_level_api(rg_query, ts_query, cwd)
+local function super_cool_high_level_api(rg_query, ts_query, cwd, accepted_node_names)
     local code_contents = {}
-    return ts_query_captures(rg_query_files(rg_query, cwd), ts_query)
+    return ts_query_captures(rg_query_files(rg_query, cwd), ts_query, accepted_node_names)
 end
 
 return {

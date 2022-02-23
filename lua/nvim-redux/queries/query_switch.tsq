@@ -4,5 +4,5 @@
                 (#match? @switch_predicate "action.type"))
     body: (switch_body 
                 (switch_case 
-                    value: (string)* @case_capture)
+                    value: (string)* @reducer)
 ))

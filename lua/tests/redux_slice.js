@@ -3,20 +3,35 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = { value: 0 }
 
+const name = "dynamicReducerName";
 const counterSlice = createSlice({
-  name: 'counter',
-  initialState,
-  reducers: {
-    increment(state) {
-      state.value++
+    name: 'counter',
+    initialState,
+    reducers: {
+        increment(state) {
+            state.value++
+        },
+
+        decrement(state) {
+            state.value--
+        },
+
+        incrementByAmount(state, action) {
+            state.value += action.payload
+        },
+
+        alternativeSyntaxFunctionDefinition: (state) => {
+            state.shouldBeCaptured = true;
+        },
+
+        anotherAlternativeSyntaxFunctionDefinition: function (state) {
+            state.shouldAlsoBeCaptured = true;
+        },
+
+        [name](state) {
+            state.yeah = "okay";
+        }
     },
-    decrement(state) {
-      state.value--
-    },
-    incrementByAmount(state, action) {
-      state.value += action.payload
-    },
-  },
 })
 
 // counterexample for test, shouldn't capture these reducers
