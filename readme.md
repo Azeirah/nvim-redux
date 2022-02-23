@@ -1,6 +1,13 @@
 # nvim-redux
 
-Redux utilities in neovim!
+Simplify navigation in redux projects with telescope.
+
+Treesitter queries written intelligently to find redux-related code in your entire project in milliseconds.
+
+- List `dispatch(ACTION)` calls in your entire project
+- List your reducer action definitions
+    - Raw definitions in switch cases
+    - redux-toolkit action definitions
 
 ## Dependencies
 
@@ -40,22 +47,21 @@ Searches your project for calls to `dispatch(...)`.
 
 ![Displays example of action definition listing in telescope](action_definitions.png)
 
-Finds all redux action definitions. Right now, only supports raw action definitions, ie
+Finds all redux action definitions. Supports both raw action definitions as well as reducers defined in slices using react toolkit.
 
 ```javascript
-// only raw actions supported as of now
+// Find raw actions
 switch (action.type) {
     case 'this_is_an_action_that_will_be_found':
         break;
 }
 
-// redux-toolkit and alternatives not yet supported
+// Reducer actions defined using redux-toolkit are also supported!
 const someSlice = createSlice({
     ...
     reducers: {
-        'this_action_is_not_supported_yet': state => {
-
-        }
+        youCanFindMe: state => {...},
+        andMe(state) {...}
     }
 });
 ```
