@@ -4,7 +4,7 @@ Simplify navigation in redux projects with telescope.
 
 Treesitter queries written intelligently to find redux-related code in your entire project in milliseconds.
 
-- ✔️ List `dispatch(ACTION)` calls in your entire project
+- ✔️ List `dispatch(...)` calls in your entire project
 - ✔️ List your reducer action definitions
     - ✔️ Raw definitions in switch cases
     - ✔️ redux-toolkit action definitions
