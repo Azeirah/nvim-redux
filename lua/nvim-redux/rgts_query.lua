@@ -40,14 +40,12 @@ local function ts_capture(filename, query, accepted_node_names)
         local start_row, start_col, end_row, end_col = node:range()
         local name = q.captures[id]
         node_accepted = false
-        --print(text)
         for _, accepted_name in ipairs(accepted_node_names) do
             if name == accepted_name then
                 node_accepted = true
                 break
             end
         end
-        -- TODO: this predicate needs to be abstracted
         if node_accepted then
             switch_cases[#switch_cases+1] = {
                 path = filename,
@@ -91,8 +89,7 @@ local function ts_query_captures(files, treesitter_query, accepted_node_names)
     return switch_cases
 end
 
-local function super_cool_high_level_api(rg_query, ts_query, cwd, accepted_node_names)
-    local code_contents = {}
+local function super_cool_high_level_api(rg_query, ts_query, accepted_node_names, cwd)
     return ts_query_captures(rg_query_files(rg_query, cwd), ts_query, accepted_node_names)
 end
 
