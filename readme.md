@@ -26,10 +26,12 @@ Confirmed to work with neovim 0.7.0 `NVIM v0.7.0-dev+1070-gf89f4b1e1`
 
 ## Setup
 
-The plugin as a whole works out of the box. The only recommendation is to add custom keybindings.
+No configuration or setup needed. All you have to do is configure your keybindings.
 
 ```vimscript
+# lrd = locate, redux, dispatch
 nmap <leader>lrd :lua require('nvim-redux').list_dispatch_calls()<CR>
+# lra = locate, redux, action
 nmap <leader>lra :lua require('nvim-redux').list_actions_in_switch_reducer()<CR>
 ```
 
