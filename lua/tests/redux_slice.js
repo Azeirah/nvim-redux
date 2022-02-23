@@ -19,5 +19,23 @@ const counterSlice = createSlice({
   },
 })
 
+// counterexample for test, shouldn't capture these reducers
+const bla = console.log({
+    reducers: {
+        dontCaptureThis(state) {
+            state.BAD = true;
+        }
+    }
+});
+
+// exported slices should also be captured
+export const mySlice = createSlice({
+    reducers: {
+        captureThisSlice(state) {
+            state.yay = true;
+        }
+    }
+});
+
 export const { increment, decrement, incrementByAmount } = counterSlice.actions
 export default counterSlice.reducer

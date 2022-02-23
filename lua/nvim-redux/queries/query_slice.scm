@@ -7,5 +7,7 @@
                 key: 
                     (property_identifier) @key_name 
                     (#match? @key_name "reducers")
-                value: (object (method_definition 
-                    name: (property_identifier) @reducer)))))))
+                value: (object [ 
+                        (method_definition)
+                        (pair value: [(arrow_function) (function)])
+                    ] @reducer))))))
