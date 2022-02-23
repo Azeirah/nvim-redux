@@ -54,14 +54,31 @@ local redux_picker = function (results, opts)
         sorter = conf.generic_sorter(opts),
         previewer = previewers.new_buffer_previewer({
             title = "Redux action preview",
+
+            setup = function () 
+                return { last_set_bufnr = nil }
+            end,
+
+            teardown = function(self)
+                if vim.api.nvim_buf_is_valid(self.state.last_set_bufnr) then
+                    vim.api.nvim_buf_clear_namespace(self.state.last_set_bufnr, ns_previewer, 0, -1) 
+                end
+            end,
+
             get_buffer_by_name = function (_, entry)
                 return entry.filename
             end,
+
             define_preview = function(self, entry, status)
                 local bufnr = self.state.bufnr
                 local p = entry.filename
                 local lnum = entry.lnum
                 local winid = self.state.winid
+
+                if self.state.last_set_bufnr then
+                    pcall(vim.api.nvim_buf_clear_namespace, self.state.last_set_bufnr, ns_previewer, 0, -1)
+                end
+
                 conf.buffer_previewer_maker(p, self.state.bufnr, {
                     bufname = self.state.bufname,
                     winid = self.state.winid,
