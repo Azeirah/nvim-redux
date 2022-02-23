@@ -46,10 +46,11 @@ local function ts_capture(filename, query, accepted_node_names)
                 break
             end
         end
+        stripped = text:gsub("\n", "")
         if node_accepted then
             switch_cases[#switch_cases+1] = {
                 path = filename,
-                text = text,
+                text = stripped,
                 lnum = start_row + 1,
                 col = start_col,
                 start_row = start_row,

@@ -34,6 +34,7 @@ function make_entry_for_treesitter_captures(entry)
 end
 
 local jump_to_line = function(self, bufnr, lnum)
+    vim.api.nvim_buf_clear_namespace(bufnr, ns_previewer, 0, -1)
     if lnum and lnum > 0 then
         pcall(vim.api.nvim_buf_add_highlight, bufnr, ns_previewer, "TelescopePreviewLine", lnum - 1, 0, -1)
         pcall(vim.api.nvim_win_set_cursor, self.state.winid, { lnum, 0 })
@@ -55,16 +56,6 @@ local redux_picker = function (results, opts)
         previewer = previewers.new_buffer_previewer({
             title = "Redux action preview",
 
-            setup = function () 
-                return { last_set_bufnr = nil }
-            end,
-
-            teardown = function(self)
-                if self.state and self.state.last_set_bufnr and vim.api.nvim_buf_is_valid(self.state.last_set_bufnr) then
-                    vim.api.nvim_buf_clear_namespace(self.state.last_set_bufnr, ns_previewer, 0, -1) 
-                end
-            end,
-
             get_buffer_by_name = function (_, entry)
                 return entry.filename
             end,
@@ -75,16 +66,12 @@ local redux_picker = function (results, opts)
                 local lnum = entry.lnum
                 local winid = self.state.winid
 
-                if self.state.last_set_bufnr then
-                    pcall(vim.api.nvim_buf_clear_namespace, self.state.last_set_bufnr, ns_previewer, 0, -1)
-                end
-
                 conf.buffer_previewer_maker(p, self.state.bufnr, {
                     bufname = self.state.bufname,
                     winid = self.state.winid,
                     preview = opts.preview,
                     callback = function(bufnr)
-                        jump_to_line(self, bufnr, lnum)
+                        jump_to_line(self, bufnr, entry.lnum)
                     end,
                 })
             end

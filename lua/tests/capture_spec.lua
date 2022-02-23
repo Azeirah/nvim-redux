@@ -42,4 +42,21 @@ describe('ts_query_captures', function()
 
         assert.is.equal(#entries, 2)
     end)
+
+    it('should bla', function() 
+        local switch_case_names_query = utils.read_file_contents('queries/query_switch.tsq', true)
+        local captures = rgts.query_for_telescope("action\\.type", switch_case_names_query, {'reducer'})
+
+        require('nvim-redux.telescope-redux-picker').redux_picker(captures)
+
+        local redux_toolkit_slices_query = utils.read_file_contents('queries/query_slice.scm', true)
+        local toolkit_slices_captures = rgts.query_for_telescope("createSlice", redux_toolkit_slices_query, {'reducer'})
+
+        -- concat both capture results into one. Two queries add up to one result.
+        for _, v in ipairs(toolkit_slices_captures) do
+            table.insert(captures, v)
+        end
+
+        require('nvim-redux.telescope-redux-picker').redux_picker(captures)
+    end)
 end)
