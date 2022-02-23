@@ -33,6 +33,16 @@ function make_entry_for_treesitter_captures(entry)
     }
 end
 
+local jump_to_line = function(self, bufnr, lnum)
+    if lnum and lnum > 0 then
+        pcall(vim.api.nvim_buf_add_highlight, bufnr, ns_previewer, "TelescopePreviewLine", lnum - 1, 0, -1)
+        pcall(vim.api.nvim_win_set_cursor, self.state.winid, { lnum, 0 })
+        vim.api.nvim_buf_call(bufnr, function()
+            vim.cmd "norm! zz"
+        end)
+    end
+end
+
 local redux_picker = function (results, opts)
     opts = opts or {}
     pickers.new(opts, {
@@ -57,15 +67,7 @@ local redux_picker = function (results, opts)
                     winid = self.state.winid,
                     preview = opts.preview,
                     callback = function(bufnr)
-                        vim.api.nvim_buf_call(bufnr, function () 
-                            -- we want highlight, but I can't get vam.api.nvim_buf_add_highlight to work!
-                            -- the code below allows for vim command injection so that's not even remotely a good substitute
-                          --  vim.cmd("norm! gg")
-                          --  vim.cmd("/" .. entry.value.text)
-                          --  vim.cmd("set cursorline")
-                          --  vim.cmd('nohl')
-                          --  vim.cmd("norm! zz")
-                        end)
+                        jump_to_line(self, bufnr, lnum)
                     end,
                 })
             end
