@@ -60,7 +60,7 @@ local redux_picker = function (results, opts)
             end,
 
             teardown = function(self)
-                if vim.api.nvim_buf_is_valid(self.state.last_set_bufnr) then
+                if self.state and self.state.last_set_bufnr and vim.api.nvim_buf_is_valid(self.state.last_set_bufnr) then
                     vim.api.nvim_buf_clear_namespace(self.state.last_set_bufnr, ns_previewer, 0, -1) 
                 end
             end,
